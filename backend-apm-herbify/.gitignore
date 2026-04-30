@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environments
+.venv/
+venv/
+env/
+.env
+
+
+
+# Dataset & Scripts (sangat besar / tidak perlu, jangan di-push)
+dataset/
+
+scripts/
+
+
+# IDE / OS files
+.vscode/
+.DS_Store
