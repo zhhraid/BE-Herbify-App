@@ -1,5 +1,5 @@
 # =============================================================================
-# main.py — FastAPI Entry Point (Hanya MobileNetV2)
+# main.py — FastAPI Entry Point (EfficientNetB0)
 # =============================================================================
 # Jalankan: python -m uvicorn main:app --reload --port 8000
 # Akses: http://localhost:8000
@@ -16,7 +16,7 @@ from app.services.prediction_service import prediction_service
 
 @asynccontextmanager
 async def lifespan(app):
-    """Load model MobileNetV2 saat server startup."""
+    """Load model EfficientNetB0 saat server startup."""
     print("=" * 50)
     print("Herbify Backend API Server")
     print("=" * 50)
@@ -37,7 +37,7 @@ from pathlib import Path
 
 app = FastAPI(
     title="Herbify API",
-    description="API klasifikasi tanaman obat menggunakan MobileNetV2",
+    description="API klasifikasi tanaman obat menggunakan EfficientNetB0",
     version="1.0.0",
     lifespan=lifespan,
 )

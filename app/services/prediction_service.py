@@ -1,7 +1,7 @@
 # =============================================================================
 # prediction_service.py — Service prediksi gambar tanaman obat
 # =============================================================================
-# Hanya menggunakan MobileNetV2 (akurasi ~96.88%)
+# Menggunakan EfficientNetB0 (model terbaik dari hasil perbandingan)
 # =============================================================================
 
 import io
@@ -13,9 +13,9 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 
-from app.models.cnn_models import create_mobilenetv2
+from app.models.cnn_models import create_efficientnetb0
 from app.services.plant_database import get_plant_info_safe
-from app.utils.config import MODEL_MOBILENET_DIR, IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
+from app.utils.config import MODEL_EFFICIENTNET_DIR, IMAGE_SIZE, IMAGENET_MEAN, IMAGENET_STD
 
 # =============================================================================
 # CLASS NAMES — Diambil langsung dari sorted(os.listdir(_combined_dataset))
@@ -47,13 +47,13 @@ else:
         "Neem", "Nelavembu", "Nerale", "Nithyapushpa", "Nooni", "Onion",
         "Padri", "Palak(Spinach)", "Papaya", "Pappaya", "Parijatha",
         "Pea", "Pepper", "Pomegranate", "Pomoegranate", "Pumpkin",
-        "Raddish", "Raktachandini", "Rose", "Sampige", "Sapota",
+        "Raddish", "Rose", "Sampige", "Sapota",
         "Seethaashoka", "Seethapala", "Spinach1", "Tamarind", "Taro",
-        "Tecoma", "Thumbe", "Tomato", "Tulasi", "Tulsi", "Turmeric",
-        "Wood_sorel", "camphor", "kamakasturi", "kepala",
+        "Tecoma", "Thumbe", "Tomato", "Tulsi", "Turmeric",
+        "camphor", "kamakasturi", "kepala",
     ]
 
-NUM_CLASSES = len(CLASS_NAMES)  # Harus 98
+NUM_CLASSES = len(CLASS_NAMES)  # Harus 95
 
 # =============================================================================
 # Transform — HARUS sama dengan test_transforms saat training
@@ -67,21 +67,21 @@ inference_transform = transforms.Compose([
 
 
 # =============================================================================
-# PREDICTION SERVICE — Hanya MobileNetV2
+# PREDICTION SERVICE — EfficientNetB0
 # =============================================================================
 
 class PredictionService:
-    """Service untuk memuat model MobileNetV2 dan melakukan prediksi."""
+    """Service untuk memuat model EfficientNetB0 dan melakukan prediksi."""
 
     def __init__(self):
         self._model = None
         self._device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     def load_model(self):
-        """Load model MobileNetV2 .pth ke memory. Dipanggil saat startup."""
-        model_path = MODEL_MOBILENET_DIR / "mobilenetv2_best.pth"
+        """Load model EfficientNetB0 .pth ke memory. Dipanggil saat startup."""
+        model_path = MODEL_EFFICIENTNET_DIR / "efficientnetb0_best.pth"
 
-        self._model = create_mobilenetv2(
+        self._model = create_efficientnetb0(
             num_classes=NUM_CLASSES, pretrained=False
         )
 
@@ -92,7 +92,7 @@ class PredictionService:
         self._model.to(self._device)
         self._model.eval()
 
-        print("[PredictionService] MobileNetV2 loaded on {}".format(self._device))
+        print("[PredictionService] EfficientNetB0 loaded on {}".format(self._device))
         print("  Path: {}".format(model_path))
         print("  Classes: {}".format(NUM_CLASSES))
 
@@ -143,7 +143,7 @@ class PredictionService:
         return {
             "class_name": best_class,
             "confidence": round(best_confidence, 4),
-            "model": "mobilenetv2",
+            "model": "efficientnetb0",
             "top_predictions": top_predictions,
             "plant_info": plant_info,
         }

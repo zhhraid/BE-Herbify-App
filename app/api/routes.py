@@ -17,7 +17,7 @@ async def health_check():
     return {
         "status": "ok",
         "model_loaded": prediction_service.is_loaded,
-        "model": "mobilenetv2",
+        "model": "efficientnetb0",
         "total_plants": get_plant_count(),
     }
 
